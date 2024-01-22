@@ -6,7 +6,7 @@ import Input from "@/app/components/inputs/Input"
 import {useCallback, useState} from "react"
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form"
 import AuthSocialButton from "./AuthSocialButton"
-import { BsGithub } from "react-icons/bs"
+import { BsGithub, BsGoogle } from "react-icons/bs"
 
 type Variant = 'Login' | 'Register'
 
@@ -57,7 +57,7 @@ const socialAction = (action : string) =>{
             <form className="spcae-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {variant === 'Register' && (
 
-               <Input label='name' errors={errors} register={register} id="name"/> 
+               <Input label='Name' errors={errors} register={register} id="name"/> 
                 )}
                 <Input label='Email' errors={errors} register={register} id="email"/>
                 <Input label='Password' errors={errors} register={register} id="password"/>
@@ -82,7 +82,7 @@ const socialAction = (action : string) =>{
                             onClick={() => socialAction('github')}
                             />
                             <AuthSocialButton
-                            icon={BsGithub}
+                            icon={BsGoogle}
                             onClick={() => socialAction('google')}
                             />
                         </div>
