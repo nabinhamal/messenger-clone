@@ -17,11 +17,11 @@ import GroupChatModal from "../[conversationId]/components/GroupChatModal";
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
-users: User[]
+  users: User[]
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ 
-  initialItems
+  initialItems,users
 }) => {
 
 const [items,setItems] = useState(initialItems)
