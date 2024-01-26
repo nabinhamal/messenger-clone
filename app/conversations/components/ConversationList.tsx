@@ -12,10 +12,12 @@ import useConversation from "@/app/hooks/useConversation";
 import { FullConversationType } from "@/app/types";
 import { useState } from "react";
 import ConversationBox from "./ConversationBox";
+import { User } from "@prisma/client";
+import GroupChatModal from "../[conversationId]/components/GroupChatModal";
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
-
+users: User[]
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ 
@@ -27,11 +29,15 @@ const [items,setItems] = useState(initialItems)
   const session = useSession();
 
   const { conversationId, isOpen } = useConversation();
-
+const [isModalOpen,setIsModalOpen] = useState(false)
  
   return (
     <>
-     
+      <GroupChatModal 
+        users={users} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+      />
       <aside className={clsx(`
         fixed 
         inset-y-0 
@@ -50,7 +56,7 @@ const [items,setItems] = useState(initialItems)
               Messages
             </div>
             <div 
-              
+              onClick={() => setIsModalOpen(true)}
               className="
                 rounded-full 
                 p-2 
