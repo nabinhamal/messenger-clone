@@ -7,11 +7,11 @@ import Link from "next/link";
 import { Conversation, User } from "@prisma/client";
 
 import useOtherUser from "@/app/hooks/useOtherUser";
-
+import useActiveList from "@/app/hooks/useActiveList";
 
 import Avatar from "@/app/components/Avatar";
-import ProfileDrawer from './ProfileDrawer';
-import AvatarGroup from '@/app/components/AvatarGroup';
+import AvatarGroup from "@/app/components/AvatarGroup";
+import ProfileDrawer from "./ProfileDrawer";
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -23,17 +23,19 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { members } = useActiveList();
+  const isActive = members.indexOf(otherUser?.email!) !== -1;
   const statusText = useMemo(() => {
     if (conversation.isGroup) {
       return `${conversation.users.length} members`;
     }
 
-    return  'Active' 
-  }, [conversation]);
+    return isActive ? 'Active' : 'Offline'
+  }, [conversation, isActive]);
 
   return (
   <>
-  <ProfileDrawer 
+    <ProfileDrawer 
       data={conversation} 
       isOpen={drawerOpen} 
       onClose={() => setDrawerOpen(false)}
@@ -72,7 +74,6 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
         ) : (
           <Avatar user={otherUser} />
         )}
-        
         <div className="flex flex-col">
           <div>{conversation.name || otherUser.name}</div>
           <div className="text-sm font-light text-neutral-500">
