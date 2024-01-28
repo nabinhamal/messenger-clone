@@ -1,29 +1,23 @@
 import { NextResponse } from "next/server";
 
-import getCurrentUser from "@/app/actions/getCurrentUser";
-import { pusherServer } from '@/app/libs/pusher'
 import prisma from "@/app/libs/prismadb";
+import getCurrentUser from "@/app/actions/get-current-user";
+import { pusherServer } from "@/app/libs/pusher";
 
-interface IParams {
-  conversationId?: string;
-}
+type IParams = {
+  conversationId: string;
+};
 
-export async function POST(
-  request: Request,
-  { params }: { params: IParams }
-) {
+export async function POST(req: Request, { params }: { params: IParams }) {
   try {
     const currentUser = await getCurrentUser();
-    const {
-      conversationId
-    } = params;
+    const { conversationId } = params;
 
-    
     if (!currentUser?.id || !currentUser?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return new NextResponse("Unauthorized.", { status: 401 });
     }
 
-    // Find existing conversation
+    // find the existing conversation
     const conversation = await prisma.conversation.findUnique({
       where: {
         id: conversationId,
@@ -31,7 +25,7 @@ export async function POST(
       include: {
         messages: {
           include: {
-            seen: true
+            seen: true,
           },
         },
         users: true,
@@ -39,20 +33,18 @@ export async function POST(
     });
 
     if (!conversation) {
-      return new NextResponse('Invalid ID', { status: 400 });
+      return new NextResponse("Invalid Id.", { status: 400 });
     }
 
-    // Find last message
+    // find the last message
     const lastMessage = conversation.messages[conversation.messages.length - 1];
 
-    if (!lastMessage) {
-      return NextResponse.json(conversation);
-    }
+    if (!lastMessage) return NextResponse.json(conversation);
 
-    // Update seen of last message
+    // update seen of last message
     const updatedMessage = await prisma.message.update({
       where: {
-        id: lastMessage.id
+        id: lastMessage.id,
       },
       include: {
         sender: true,
@@ -61,29 +53,29 @@ export async function POST(
       data: {
         seen: {
           connect: {
-            id: currentUser.id
-          }
-        }
-      }
+            id: currentUser.id,
+          },
+        },
+      },
     });
 
-    // Update all connections with new seen
-    await pusherServer.trigger(currentUser.email, 'conversation:update', {
+    await pusherServer.trigger(currentUser.email, "conversation:update", {
       id: conversationId,
-      messages: [updatedMessage]
+      messages: [updatedMessage],
     });
 
-    // If user has already seen the message, no need to go further
-    if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+    if (lastMessage.seenIds.indexOf(currentUser.id) !== -1)
       return NextResponse.json(conversation);
-    }
 
-    // Update last message seen
-    await pusherServer.trigger(conversationId!, 'message:update', updatedMessage);
+    await pusherServer.trigger(
+      conversationId!,
+      "message:update",
+      updatedMessage
+    );
 
-    return new NextResponse('Success');
-  } catch (error) {
-    console.log(error, 'ERROR_MESSAGES_SEEN')
-    return new NextResponse('Error', { status: 500 });
+    return NextResponse.json(updatedMessage);
+  } catch (error: unknown) {
+    console.log("ERROR_MESSAGES_SEEN:", error);
+    return new NextResponse("Internal Server Error.", { status: 500 });
   }
 }

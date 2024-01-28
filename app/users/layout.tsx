@@ -1,20 +1,16 @@
-import getUsers from "../actions/getUsers";
-import Sidebar from "../components/sidebar/Sidebar";
-import UserList from "./components/UserList";
+import type { PropsWithChildren } from "react";
 
-export default async function UsersLayout({
-  children
-}: {
-  children: React.ReactNode,
-}) {
+import Sidebar from "@/app/components/sidebar/sidebar";
+import UserList from "@/app/users/components/user-list";
+import getUsers from "@/app/actions/get-users";
+
+export default async function UsersLayout({ children }: PropsWithChildren) {
   const users = await getUsers();
 
   return (
     <Sidebar>
-      <div className="h-full">
-        <UserList items={users} />
-        {children}
-      </div>
+      <UserList users={users} />
+      <div className="h-full">{children}</div>
     </Sidebar>
   );
 }

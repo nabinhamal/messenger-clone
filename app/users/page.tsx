@@ -1,11 +1,11 @@
-import EmptyState from '../components/EmptyState';
+import EmptyState from "@/app/components/empty-state";
 
-const People = () => {
+const Users = () => {
   return (
     <div className="hidden lg:block lg:pl-80 h-full">
       <EmptyState />
     </div>
-   );
-}
- 
-export default People;
+  );
+};
+
+export default Users;

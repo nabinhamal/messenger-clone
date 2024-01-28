@@ -1,27 +1,36 @@
-import './globals.css'
-import AuthContext from './context/AuthContext'
-import ActiveStatus from './components/ActiveStatus'
-import ToasterContext from './context/ToasterContext'
+import type { Metadata, Viewport } from "next";
+import type { PropsWithChildren } from "react";
+import { Inter } from "next/font/google";
 
-export const metadata = {
-  title: 'Messenger',
-  description: 'Messenger Clone',
-}
+import ActiveStatus from "@/app/components/active-status";
+import ToasterContext from "@/app/context/toaster-context";
+import AuthContext from "@/app/context/auth-context";
+import { siteConfig } from "@/app/config/site";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const viewport: Viewport = {
+  themeColor: "#0284C7",
+};
+
+export const metadata: Metadata = siteConfig;
+
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         <AuthContext>
-          <ToasterContext />
+          {/* react hot toast */}
+          <aside>
+            <ToasterContext />
+          </aside>
+
           <ActiveStatus />
           {children}
         </AuthContext>
       </body>
     </html>
-  )
+  );
 }
