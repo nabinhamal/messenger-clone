@@ -12,10 +12,11 @@ import { User } from '@prisma/client';
 
 
 import { toast } from 'react-hot-toast';
-import Modal from './../../../components/Modal';
-import Input from './../../../components/inputs/Input';
-import Select from './../../../components/inputs/Select';
-import Button from './../../../components/Button';
+import Modal from './Modal';
+
+import Select from './inputs/Select';
+import Button from './Button';
+import Input from './inputs/Input';
 
 interface GroupChatModalProps {
   isOpen?: boolean;
